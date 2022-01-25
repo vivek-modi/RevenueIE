@@ -63,10 +63,13 @@ class SettingsActivity : AppCompatActivity() {
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             }
             passwordPref?.summaryProvider = SummaryProvider<EditTextPreference> {
+
                 val sb = StringBuilder()
-                for (s in it.text.indices) {
-                    sb.append("*")
-                }
+
+                if (it.text != null)
+                    for (s in it.text.indices) {
+                        sb.append("*")
+                    }
                 sb.toString()
             }
         }
