@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">RevenueIE</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="autofill_title">Login Autofill</string>
+    <string name="autofill_ppsn">PPS Number</string>
+    <string name="key_ppsn">ppsn</string>
+    <string name="key_dobdd">dobdd</string>
+    <string name="key_dobmm">dobmm</string>
+    <string name="key_dobyy">dobyy</string>
+    <string name="autofill_dobdd">Date of Birth - DD</string>
+    <string name="autofill_dobmm">Date of Birth - MM</string>
+    <string name="autofill_dobyy">Date of Birth - YY</string>
+    <string name="autofill_password">Password</string>
+    <string name="key_password">password</string>
+    <string name="pref_appmode_title">Application Modes</string>
+    <string name="key_mode_revenue_tracker">revenue_tracker</string>
+    <string name="mode_revenue_tracker_title">Revenue Tracker Mode</string>
+    <string name="mode_revenue_tracker_summary">Turn on redirect to Revenue Tracker automatically after login.</string>
+    <string name="mode_revenue_tracker_summary_off">Turn off redirect to Revenue Tracker automatically after login.</string>
+</resources>

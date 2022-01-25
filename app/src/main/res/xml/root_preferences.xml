@@ -1,0 +1,40 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/autofill_title">
+
+        <EditTextPreference
+            app:key="@string/key_ppsn"
+            app:title="@string/autofill_ppsn"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="@string/key_dobdd"
+            app:title="@string/autofill_dobdd"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="@string/key_dobmm"
+            app:title="@string/autofill_dobmm"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="@string/key_dobyy"
+            app:title="@string/autofill_dobyy"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="@string/key_password"
+            app:title="@string/autofill_password"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_appmode_title">
+
+        <SwitchPreferenceCompat
+            app:key="@string/key_mode_revenue_tracker"
+            app:title="@string/mode_revenue_tracker_title"
+            app:summaryOff="@string/mode_revenue_tracker_summary"
+            app:summaryOn="@string/mode_revenue_tracker_summary_off"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
