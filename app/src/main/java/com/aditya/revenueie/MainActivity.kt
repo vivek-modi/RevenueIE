@@ -84,29 +84,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 return true
             }
-
-            // Grant permissions for cam
-            @TargetApi(Build.VERSION_CODES.M)
-            override fun onPermissionRequest(request: PermissionRequest) {
-                if ("android.webkit.resource.VIDEO_CAPTURE" == request.resources[0]) {
-                    if (ContextCompat.checkSelfPermission(
-                            applicationContext,
-                            android.Manifest.permission.CAMERA
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        request.grant(request.resources)
-                    } else {
-                        ActivityCompat.requestPermissions(
-                            this@MainActivity,
-                            arrayOf(
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE
-                            ),
-                            1000
-                        )
-                    }
-                }
-            }
         }
 
         binding.contents.webView.loadUrl("https://www.ros.ie/myaccount-web/sign_in.html")
