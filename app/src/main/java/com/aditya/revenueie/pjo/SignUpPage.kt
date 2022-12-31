@@ -12,7 +12,8 @@ class SignUpPage(
 ) : PJOInterface() {
 
     override fun checkPageConditions(view: WebView?, url: String?): Boolean {
-        return url?.startsWith("https://www.ros.ie/myaccount-web/sign_in.html") == true
+        return (url?.startsWith("https://www.ros.ie/myaccount-web/sign_in.html") == true
+                && url.endsWith("s1"))
     }
 
     override fun codeToExecute(): String {

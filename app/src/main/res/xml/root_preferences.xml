@@ -25,16 +25,22 @@
         <EditTextPreference
             app:key="@string/key_password"
             app:title="@string/autofill_password"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_appmode_title">
 
         <SwitchPreferenceCompat
+            app:defaultValue="false"
             app:key="@string/key_mode_revenue_tracker"
-            app:title="@string/mode_revenue_tracker_title"
-            app:summaryOff="@string/mode_revenue_tracker_summary"
-            app:summaryOn="@string/mode_revenue_tracker_summary_off"/>
+            app:summaryOff="@string/mode_revenue_tracker_summary_off"
+            app:summaryOn="@string/mode_revenue_tracker_summary"
+            app:title="@string/mode_revenue_tracker_title" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="@string/mode_autofill_key"
+            app:title="@string/mode_autofill_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

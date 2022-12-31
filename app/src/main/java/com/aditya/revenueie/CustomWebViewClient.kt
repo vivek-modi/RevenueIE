@@ -1,17 +1,19 @@
 package com.aditya.revenueie
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
+import android.util.Log
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
+import com.aditya.revenueie.pjo.RedirectToTracker
 import com.aditya.revenueie.pjo.SignUpPage
-import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.aditya.revenueie.pjo.TextVerificationPageReceiverStart
 
 
 class CustomWebViewClient(
@@ -19,26 +21,38 @@ class CustomWebViewClient(
 ) : WebViewClient() {
     private val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private val pjoClients = listOf<PJOInterface>(
-        SignUpPage(context, sharedPrefs)
+    private val pjoStartedClients = mutableListOf(
+        TextVerificationPageReceiverStart(context, sharedPrefs)
     )
 
-    override fun onPageFinished(view: WebView?, url: String?) {
-        super.onPageFinished(view, url)
+    private val pjoFinishedClients = mutableListOf(
+        SignUpPage(context, sharedPrefs),
+        RedirectToTracker(context, sharedPrefs)
+    )
 
-        for (pjoClient in pjoClients) {
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        super.onPageStarted(view, url, favicon)
+
+        Log.e("Remote Url Started", url.toString())
+
+        for (pjoClient in pjoStartedClients) {
             if (pjoClient.checkPageConditions(view, url)) {
                 view?.evaluateJavascript(pjoClient.codeToExecute()) { }
                 break
             }
         }
+    }
 
-        if (sharedPrefs.getBoolean(context.getString(R.string.key_mode_revenue_tracker), false)
-            && url?.startsWith("https://www.ros.ie/myaccount-web/portal.html") == true
-        ) {
-            view?.evaluateJavascript(
-                "javascript:document.getElementById('myreceipts-url').click()"
-            ) { }
+    override fun onPageFinished(view: WebView?, url: String?) {
+        super.onPageFinished(view, url)
+
+        Log.e("Remote Url Finished", url.toString())
+
+        for (pjoClient in pjoFinishedClients) {
+            if (pjoClient.checkPageConditions(view, url)) {
+                view?.evaluateJavascript(pjoClient.codeToExecute()) { }
+                break
+            }
         }
     }
 

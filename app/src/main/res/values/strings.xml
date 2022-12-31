@@ -17,6 +17,8 @@
     <string name="pref_appmode_title">Application Modes</string>
     <string name="key_mode_revenue_tracker">revenue_tracker</string>
     <string name="mode_revenue_tracker_title">Revenue Tracker Mode</string>
-    <string name="mode_revenue_tracker_summary">Turn on redirect to Revenue Tracker automatically after login.</string>
-    <string name="mode_revenue_tracker_summary_off">Turn off redirect to Revenue Tracker automatically after login.</string>
+    <string name="mode_revenue_tracker_summary">Revenue Tracker will open automatically after login.</string>
+    <string name="mode_revenue_tracker_summary_off">Turn on redirect to Revenue Tracker automatically open after login.</string>
+    <string name="mode_autofill_key">autofill_otp</string>
+    <string name="mode_autofill_title">Autofill One time passwords when signing in</string>
 </resources>

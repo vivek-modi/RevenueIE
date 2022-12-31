@@ -1,13 +1,13 @@
 package com.aditya.revenueie
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceFragmentCompat
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
 import android.text.InputType
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.EditTextPreference
 import androidx.preference.Preference.SummaryProvider
+import androidx.preference.PreferenceFragmentCompat
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -67,7 +67,7 @@ class SettingsActivity : AppCompatActivity() {
                 val sb = StringBuilder()
 
                 if (it.text != null)
-                    for (s in it.text.indices) {
+                    for (s in it.text!!.indices) {
                         sb.append("*")
                     }
                 sb.toString()

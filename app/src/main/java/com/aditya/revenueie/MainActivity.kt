@@ -1,31 +1,69 @@
 package com.aditya.revenueie
 
-import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.content.pm.PackageManager
+import android.app.Activity
+import android.content.*
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.PermissionRequest
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.aditya.revenueie.databinding.ActivityMainBinding
+import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.Status
 
 
 class MainActivity : AppCompatActivity() {
     var uploadMessage: ValueCallback<Array<Uri>>? = null
-    val REQUEST_SELECT_FILE = 100
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var smsCallback: ValueCallback<String>
+
+    private val smsVerificationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (SmsRetriever.SMS_RETRIEVED_ACTION == intent.action) {
+                val extras = intent.extras
+                val smsRetrieverStatus = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
+
+                when (smsRetrieverStatus.statusCode) {
+                    CommonStatusCodes.SUCCESS -> {
+                        // Get consent intent
+                        val consentIntent =
+                            extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+                        try {
+                            // Start activity to show consent dialog to user, activity must be started in
+                            // 5 minutes, otherwise you'll receive another TIMEOUT intent
+                            smsRecLauncher.launch(consentIntent)
+                        } catch (e: ActivityNotFoundException) {
+                            Log.e("Broadcast Error", e.toString())
+                        }
+                    }
+                    CommonStatusCodes.TIMEOUT -> {
+                        // Time out occurred, handle the error.
+                    }
+                }
+            }
+        }
+    }
+
+    private var smsRecLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    val message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+                    Log.e("Message Rec", message.toString())
+
+                    smsCallback.onReceiveValue(message.toString().split(" ")[3])
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +73,16 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        binding.contents.webView.webViewClient =
-            CustomWebViewClient(this)
+        val intentFilter = IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION)
+        registerReceiver(smsVerificationReceiver, intentFilter)
+
+        smsCallback = ValueCallback<String> { it ->
+            binding.contents.webView.evaluateJavascript("javascript: document.getElementById('passcode-input').value = '${it}';", null)
+        }
+
+        val webViewClient = CustomWebViewClient(this)
+
+        binding.contents.webView.webViewClient = webViewClient
         binding.contents.webView.settings.javaScriptEnabled = true
         binding.contents.webView.settings.domStorageEnabled = true
         binding.contents.webView.settings.builtInZoomControls = true
@@ -63,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     val intent = fileChooserParams?.createIntent()
 
                     try {
-                        startActivityForResult(intent, REQUEST_SELECT_FILE)
+                        showFileChooserLauncher.launch(intent)
                     } catch (e: ActivityNotFoundException) {
                         uploadMessage = null
                         Toast.makeText(
@@ -109,23 +155,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("MissingSuperCall")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode == REQUEST_SELECT_FILE) {
-            if (uploadMessage == null) return
-            uploadMessage!!.onReceiveValue(
-                WebChromeClient.FileChooserParams.parseResult(
-                    resultCode,
-                    intent
-                )
-            )
-            uploadMessage = null
-        } else Toast.makeText(
-            this,
-            "Failed to Upload Image",
-            Toast.LENGTH_LONG
-        ).show()
-    }
+    private var showFileChooserLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.let { data ->
+                    if (uploadMessage == null) return@registerForActivityResult
+                    uploadMessage!!.onReceiveValue(
+                        WebChromeClient.FileChooserParams.parseResult(
+                            result.resultCode,
+                            intent
+                        )
+                    )
+                    uploadMessage = null
+                }
+            }
+        }
 
     override fun onBackPressed() {
         if (binding.contents.webView.canGoBack()) {
