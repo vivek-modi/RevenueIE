@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                     uploadMessage!!.onReceiveValue(
                         WebChromeClient.FileChooserParams.parseResult(
                             result.resultCode,
-                            intent
+                            data
                         )
                     )
                     uploadMessage = null
