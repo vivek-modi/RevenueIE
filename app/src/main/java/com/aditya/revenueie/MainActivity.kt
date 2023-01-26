@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(smsVerificationReceiver, intentFilter)
 
         smsCallback = ValueCallback<String> { it ->
-            binding.contents.webView.evaluateJavascript("javascript: document.getElementById('passcode-input').value = '${it}';", null)
+            binding.contents.webView.evaluateJavascript("javascript: document.getElementById('passcode-input').value = '${it}'; document.getElementById('passcodeForm').submit();", null)
         }
 
         val webViewClient = CustomWebViewClient(this)
